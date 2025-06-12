@@ -1,31 +1,14 @@
-# Use an official OpenJDK base image
-FROM openjdk:11-jdk-slim
+# Use the official NGINX image from Docker Hub
+FROM nginx:alpine
 
-# Set environment variables
-ENV JMETER_VERSION=5.6.3 \
-    JMETER_HOME=/opt/jmeter \
-    CATALINA_HOME=/opt/tomcat \
-    TOMCAT_VERSION=9.0.85
+# Copy custom configuration file (optional)
+# COPY nginx.conf /etc/nginx/nginx.conf
 
-# Install dependencies and download JMeter and Tomcat
-RUN apt-get update && apt-get install -y wget unzip && \
-    # Install JMeter
-    wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz && \
-    tar -xzf apache-jmeter-${JMETER_VERSION}.tgz -C /opt && \
-    mv /opt/apache-jmeter-${JMETER_VERSION} ${JMETER_HOME} && \
-    rm apache-jmeter-${JMETER_VERSION}.tgz && \
-    # Install Tomcat
-    wget https://downloads.apache.org/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
-    tar -xzf apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /opt && \
-    mv /opt/apache-tomcat-${TOMCAT_VERSION} ${CATALINA_HOME} && \
-    rm apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
-    apt-get clean
+# Copy static website files (optional)
+# COPY ./html /usr/share/nginx/html
 
-# Expose ports
-EXPOSE 8080 1099
+# Expose port 80
+EXPOSE 80
 
-# Set working directory
-WORKDIR ${CATALINA_HOME}
-
-# Start both Tomcat and JMeter in background (example only)
-CMD ${CATALINA_HOME}/bin/startup.sh && tail -f ${CATALINA_HOME}/logs/catalina.out
+# Start NGINX (default command in base image)
+CMD ["nginx", "-g", "daemon off;"]
