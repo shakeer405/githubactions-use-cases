@@ -25,5 +25,5 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: list files
-        run: ls -lrth
+        run: ls -lrth; pwd
 
